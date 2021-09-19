@@ -8,8 +8,8 @@ async function run(): Promise<void> {
 
     const token = core.getInput('token', { required: true })
     const quiet = core.getInput('quiet', { required: false }) === 'true'
-    const titleRegexInput = core.getInput('titleRegex', { required: false }) || '^[([A-Z]{2,})(-)(d+)]'
-    const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || '[([A-Z]{2,})(-)(d+)]'
+    const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\[([A-Z]{2,})(-)(\d+)\]` //eslint-disable-line no-useless-escape
+    const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\[([A-Z]{2,})(-)(\d+)\]` //eslint-disable-line no-useless-escape
     const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]'
 
     const client = github.getOctokit(token)
