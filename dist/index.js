@@ -44,8 +44,8 @@ function run() {
             core.debug(JSON.stringify(github.context));
             const token = core.getInput('token', { required: true });
             const quiet = core.getInput('quiet', { required: false }) === 'true';
-            const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\[([A-Z]{2,})(-)(\d+)\]`; //eslint-disable-line no-useless-escape
-            const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\[([A-Z]{2,})(-)(\d+)\]`; //eslint-disable-line no-useless-escape
+            const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d{3,})\\]`;
+            const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d{3,})\\]`;
             const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]';
             const client = github.getOctokit(token);
             const prTitle = (_c = (_b = (_a = github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.pull_request) === null || _c === void 0 ? void 0 : _c.title;
