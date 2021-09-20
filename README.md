@@ -5,6 +5,8 @@ Lint PR to ensure a JIRA ticket is found in both the title and the body
 
 In `.github/workflows`, create a `lint_pr.yml` file with the appropriate config options.
 
+If you do not have a JIRA ticket, then add `[no-ticket]` or whatever is configured in the `no_ticket`.
+
 ## Example
 
 ```yml
