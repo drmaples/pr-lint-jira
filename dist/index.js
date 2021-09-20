@@ -96,17 +96,15 @@ function run() {
 function createPRComment(client) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { owner, repo, number } = github.context.issue;
             yield client.rest.pulls.createReviewComment({
-                owner,
-                repo,
-                pull_number: number,
-                body: 'PR title AND body does not contain a reference to a JIRA ticket.',
-                event: 'COMMENT'
+                owner: github.context.issue.owner,
+                repo: github.context.issue.repo,
+                pull_number: github.context.issue.number,
+                body: 'PR title AND body does not contain a reference to a JIRA ticket.'
             });
         }
         catch (error) {
-            core.setFailed(`Failed to update PR`);
+            core.error(`Failed to create PR comment: ${error}`);
         }
     });
 }
