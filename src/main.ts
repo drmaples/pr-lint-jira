@@ -63,12 +63,15 @@ async function run(): Promise<void> {
 
 async function createPRComment(client: InstanceType<typeof GitHub>): Promise<void> {
   try {
-    await client.rest.pulls.createReviewComment({
+    // https://octokit.github.io/rest.js/v18#pulls-create-review-comment
+    const params = {
       owner: github.context.issue.owner,
       repo: github.context.issue.repo,
       pull_number: github.context.issue.number,
       body: 'PR title AND body does not contain a reference to a JIRA ticket.'
-    })
+    }
+    core.info(`createReviewComment params: ${params}`)
+    await client.rest.pulls.createReviewComment(params)
   } catch (error) {
     core.error(`Failed to create PR comment: ${error}`)
   }
