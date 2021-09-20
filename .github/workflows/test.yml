@@ -19,5 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        env:
+          IS_CI: 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

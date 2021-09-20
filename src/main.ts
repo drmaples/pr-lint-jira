@@ -2,14 +2,16 @@
 
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import * as process from 'process'
 import { GitHub } from '@actions/github/lib/utils'
 
 async function run(): Promise<void> {
   try {
-    core.info(JSON.stringify(github.context))
+    core.debug(JSON.stringify(github.context))
 
+    const isCI = process.env.IS_CI === 'true'
     const token = core.getInput('token', { required: true })
-    const quiet = core.getInput('quiet', { required: false }) === 'true'
+    const makePrComment = core.getInput('makePrComment', { required: false }) === 'true'
     const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d{3,})\\]`
     const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d{3,})\\]`
     const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]'
@@ -17,10 +19,6 @@ async function run(): Promise<void> {
     const client = github.getOctokit(token)
     const prTitle: string = github.context?.payload?.pull_request?.title || ''
     const prBody = github.context?.payload?.pull_request?.body || ''
-    if (prTitle.length + prTitle.length === 0) {
-      core.info('CI env detected, pr title and body have 0 length')
-      return
-    }
 
     const reTitle = new RegExp(titleRegexInput, 'g')
     const reBody = new RegExp(bodyRegexInput, 'g')
@@ -41,21 +39,22 @@ async function run(): Promise<void> {
       core.info(`success, found ${noTicketInput} in both title and body`)
       return
     }
+    if (isCI) {
+      core.info(`ci mode detected. not returning failure`)
+      return
+    }
 
     core.setFailed('missing JIRA ticket in both PR title AND body')
-    makePrComment(client, quiet)
+    if (makePrComment === true) {
+      createPRComment(client)
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
 }
 
-async function makePrComment(client: InstanceType<typeof GitHub>, quiet: boolean): Promise<void> {
+async function createPRComment(client: InstanceType<typeof GitHub>): Promise<void> {
   try {
-    if (quiet) {
-      core.info(`quiet mode enabled. skipping creating PR comment.`)
-      return
-    }
-
     const { owner, repo, number } = github.context.issue
     await client.rest.pulls.createReview({
       owner,

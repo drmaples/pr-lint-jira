@@ -38,23 +38,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const github = __importStar(__nccwpck_require__(438));
+const process = __importStar(__nccwpck_require__(765));
 function run() {
     var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.info(JSON.stringify(github.context));
+            core.debug(JSON.stringify(github.context));
+            const isCI = process.env.IS_CI === 'true';
             const token = core.getInput('token', { required: true });
-            const quiet = core.getInput('quiet', { required: false }) === 'true';
+            const makePrComment = core.getInput('makePrComment', { required: false }) === 'true';
             const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d{3,})\\]`;
             const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d{3,})\\]`;
             const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]';
             const client = github.getOctokit(token);
             const prTitle = ((_c = (_b = (_a = github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.pull_request) === null || _c === void 0 ? void 0 : _c.title) || '';
             const prBody = ((_f = (_e = (_d = github.context) === null || _d === void 0 ? void 0 : _d.payload) === null || _e === void 0 ? void 0 : _e.pull_request) === null || _f === void 0 ? void 0 : _f.body) || '';
-            if ((prTitle.length + prTitle.length) === 0) {
-                core.info('CI env detected, pr title and body have 0 length');
-                return;
-            }
             const reTitle = new RegExp(titleRegexInput, 'g');
             const reBody = new RegExp(bodyRegexInput, 'g');
             const foundTixInTitle = reTitle.test(prTitle);
@@ -73,21 +71,23 @@ function run() {
                 core.info(`success, found ${noTicketInput} in both title and body`);
                 return;
             }
+            if (isCI) {
+                core.info(`ci mode detected. not returning failure`);
+                return;
+            }
             core.setFailed('missing JIRA ticket in both PR title AND body');
-            makePrComment(client, quiet);
+            if (makePrComment === true) {
+                createPRComment(client);
+            }
         }
         catch (error) {
             core.setFailed(error.message);
         }
     });
 }
-function makePrComment(client, quiet) {
+function createPRComment(client) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (quiet) {
-                core.info(`quiet mode enabled. skipping creating PR comment.`);
-                return;
-            }
             const { owner, repo, number } = github.context.issue;
             yield client.rest.pulls.createReview({
                 owner,
@@ -6352,6 +6352,14 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 765:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");
 
 /***/ }),
 

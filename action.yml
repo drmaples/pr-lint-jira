@@ -5,10 +5,10 @@ inputs:
   token:
     description: 'GitHub authentication token'
     required: true
-  quiet:
-    description: if enabled, create a PR comment on failure
+  makePrComment:
+    description: if enabled, create a PR comment on missing JIRA ticket
     required: false
-    default: 'true'
+    default: 'false'
   titleRegexInput:
     description: regex that matches JIRA ticket in PR title. defaults to starting with JIRA ticket in square brackets.
     required: false

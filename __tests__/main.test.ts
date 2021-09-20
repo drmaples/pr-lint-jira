@@ -11,6 +11,7 @@ test('test regex', () => {
 })
 
 test('test runs', () => {
+  process.env['IS_CI'] = 'true'
   process.env['INPUT_TOKEN'] = 'xxxxxx'
   const ip = path.join(__dirname, '..', 'lib', 'main.js')
   try {
