@@ -44,32 +44,33 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.debug(JSON.stringify(github.context));
-            if (((_a = github.context) === null || _a === void 0 ? void 0 : _a.eventName) !== 'pull_request') {
-                core.info(`non pull request found`);
-                return;
-            }
             const isCI = process.env.IS_CI === 'true';
             const token = core.getInput('token', { required: true });
-            const makePrComment = core.getInput('makePrComment', { required: false }) === 'true';
-            const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d+)\\]`;
-            const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d+)\\]`;
-            const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]';
-            console.log(`>>>>> ${titleRegexInput}`);
-            console.log(`>>>>> ${bodyRegexInput}`);
-            1 / 0;
+            const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true';
+            const titleRegexInput = core.getInput('title_regex', { required: false }) || `^\\[([A-Z]{2,}-\\d+)\\]`;
+            const bodyRegexInput = core.getInput('body_regex', { required: false }) || `\\[([A-Z]{2,}-\\d+)\\]`;
+            const noTicketInput = core.getInput('no_ticket', { required: false }) || '[no-ticket]';
+            console.log(`input make_pr_comment: ${makePrComment}`);
+            console.log(`input title_regex    : ${titleRegexInput}`);
+            console.log(`input body_regex     : ${bodyRegexInput}`);
+            console.log(`input no_ticket      : ${noTicketInput}`);
             const client = github.getOctokit(token);
-            const prTitle = ((_d = (_c = (_b = github.context) === null || _b === void 0 ? void 0 : _b.payload) === null || _c === void 0 ? void 0 : _c.pull_request) === null || _d === void 0 ? void 0 : _d.title) || '';
-            const prBody = ((_g = (_f = (_e = github.context) === null || _e === void 0 ? void 0 : _e.payload) === null || _f === void 0 ? void 0 : _f.pull_request) === null || _g === void 0 ? void 0 : _g.body) || '';
+            const prTitle = ((_c = (_b = (_a = github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.pull_request) === null || _c === void 0 ? void 0 : _c.title) || '';
+            const prBody = ((_f = (_e = (_d = github.context) === null || _d === void 0 ? void 0 : _d.payload) === null || _e === void 0 ? void 0 : _e.pull_request) === null || _f === void 0 ? void 0 : _f.body) || '';
             const reTitle = new RegExp(titleRegexInput, 'g');
             const reBody = new RegExp(bodyRegexInput, 'g');
             const foundTixInTitle = reTitle.test(prTitle);
             const foundTixInBody = reBody.test(prBody);
             const foundNoTixInTitle = prTitle.startsWith(noTicketInput);
             const foundNoTixInBody = prBody.includes(noTicketInput);
-            core.info(`found tix in title: ${foundTixInTitle}`);
-            core.info(`found tix in body : ${foundTixInBody}`);
-            core.info(`found no-tix in title: ${foundNoTixInTitle}`);
-            core.info(`found no-tix in body : ${foundNoTixInBody}`);
+            core.info(`found ticket in title   : ${foundTixInTitle}`);
+            core.info(`found ticket in body    : ${foundTixInBody}`);
+            core.info(`found no_ticket in title: ${foundNoTixInTitle}`);
+            core.info(`found no_ticket in body : ${foundNoTixInBody}`);
+            if (((_g = github.context) === null || _g === void 0 ? void 0 : _g.eventName) !== 'pull_request') {
+                core.info(`success, event is not a pull request`);
+                return;
+            }
             if (foundTixInTitle && foundTixInBody) {
                 core.info('success, found tix in both title and body');
                 return;
