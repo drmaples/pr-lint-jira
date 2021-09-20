@@ -5,19 +5,19 @@ inputs:
   token:
     description: 'GitHub authentication token'
     required: true
-  makePrComment:
+  make_pr_comment:
     description: if enabled, create a PR comment on missing JIRA ticket
     required: false
     default: 'false'
-  titleRegexInput:
+  title_regex:
     description: regex that matches JIRA ticket in PR title. defaults to starting with JIRA ticket in square brackets.
     required: false
     default: '^\[([A-Z]{2,})(-)(\d+)\]'
-  bodyRegexInput:
+  body_regex:
     description: regex that matches JIRA ticket in PR body. defaults to JIRA ticket in square brackets being anywhere in PR body
     required: false
     default: '\[([A-Z]{2,})(-)(\d+)\]'
-  noTicketInput:
+  no_ticket:
     description: 'your PR has no associated JIRA ticket. use this string in both the PR title and body to pass linting'
     required: false
     default: '[no-ticket]'

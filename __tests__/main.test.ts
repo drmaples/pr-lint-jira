@@ -4,7 +4,7 @@ import * as cp from 'child_process'
 import * as path from 'path'
 
 test('test regex', () => {
-  const re = new RegExp(`\\[([A-Z]{2,}-\\d{3,})\\]`, 'g')
+  const re = new RegExp(`\\[([A-Z]{2,}-\\d+)\\]`, 'g')
   expect(re.test('foo')).toEqual(false)
   expect(re.test('FOO-123')).toEqual(false)
   expect(re.test('[FOO-123]')).toEqual(true)
