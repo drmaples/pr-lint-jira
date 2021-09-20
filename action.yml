@@ -1,11 +1,31 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'pr-lint-jira'
+description: 'Lint PR to ensure a JIRA ticket is found in both the title and the body'
+
 inputs:
-  milliseconds: # change this
+  token:
+    description: 'GitHub authentication token'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  quiet:
+    description: if enabled, create a PR comment on failure
+    required: false
+    default: 'true'
+  titleRegexInput:
+    description: regex that matches JIRA ticket in PR title. defaults to starting with JIRA ticket in square brackets.
+    required: false
+    default: '^\[([A-Z]{2,})(-)(\d+)\]'
+  bodyRegexInput:
+    description: regex that matches JIRA ticket in PR body. defaults to JIRA ticket in square brackets being anywhere in PR body
+    required: false
+    default: '\[([A-Z]{2,})(-)(\d+)\]'
+  noTicketInput:
+    description: 'your PR has no associated JIRA ticket. use this string in both the PR title and body to pass linting'
+    required: false
+    default: '[no-ticket]'
+
 runs:
   using: 'node12'
   main: 'dist/index.js'
+
+  branding:
+  icon: 'git-pull-request'
+  color: 'blue'

@@ -26,10 +26,4 @@ jobs:
 
 ## Inputs
 
-| Name | Required | Default | Description |
-| --- | --- | --- | --- |
-| token | ✅ | | github access token |
-| quiet | | `true` | if enabled, create a PR comment on failure |
-| titleRegexInput | | `^\[([A-Z]{2,})(-)(\d+)\]` | regex that matches JIRA ticket in PR title. defaults to starting with JIRA ticket in square brackets. |
-| bodyRegexInput | | `\[([A-Z]{2,})(-)(\d+)\]` | regex that matches JIRA ticket in PR body. defaults to JIRA ticket in square brackets being anywhere in PR body |
-| noTicketInput | | `[no-ticket]` | your PR has no associated JIRA ticket. use this string in both the PR title and body to pass linting |
+see [action.yml](action.yml)
