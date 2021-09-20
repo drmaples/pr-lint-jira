@@ -97,14 +97,12 @@ function createPRComment(client) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // https://octokit.github.io/rest.js/v18#pulls-create-review-comment
-            const params = {
+            yield client.rest.issues.createComment({
                 owner: github.context.issue.owner,
                 repo: github.context.issue.repo,
-                pull_number: github.context.issue.number,
+                issue_number: github.context.issue.number,
                 body: 'PR title AND body does not contain a reference to a JIRA ticket.'
-            };
-            core.info(`createReviewComment params: ${params}`);
-            yield client.rest.pulls.createReviewComment(params);
+            });
         }
         catch (error) {
             core.error(`Failed to create PR comment: ${error}`);
