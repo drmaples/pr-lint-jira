@@ -97,7 +97,7 @@ function createPRComment(client) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { owner, repo, number } = github.context.issue;
-            yield client.rest.pulls.createReview({
+            yield client.rest.pulls.createReviewComment({
                 owner,
                 repo,
                 pull_number: number,

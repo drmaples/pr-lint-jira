@@ -64,7 +64,7 @@ async function run(): Promise<void> {
 async function createPRComment(client: InstanceType<typeof GitHub>): Promise<void> {
   try {
     const { owner, repo, number } = github.context.issue
-    await client.rest.pulls.createReview({
+    await client.rest.pulls.createReviewComment({
       owner,
       repo,
       pull_number: number,
