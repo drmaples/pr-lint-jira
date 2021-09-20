@@ -40,19 +40,26 @@ const core = __importStar(__nccwpck_require__(186));
 const github = __importStar(__nccwpck_require__(438));
 const process = __importStar(__nccwpck_require__(765));
 function run() {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.debug(JSON.stringify(github.context));
+            if (((_a = github.context) === null || _a === void 0 ? void 0 : _a.eventName) !== 'pull_request') {
+                core.info(`non pull request found`);
+                return;
+            }
             const isCI = process.env.IS_CI === 'true';
             const token = core.getInput('token', { required: true });
             const makePrComment = core.getInput('makePrComment', { required: false }) === 'true';
-            const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d{3,})\\]`;
-            const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d{3,})\\]`;
+            const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d+)\\]`;
+            const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d+)\\]`;
             const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]';
+            console.log(`>>>>> ${titleRegexInput}`);
+            console.log(`>>>>> ${bodyRegexInput}`);
+            1 / 0;
             const client = github.getOctokit(token);
-            const prTitle = ((_c = (_b = (_a = github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.pull_request) === null || _c === void 0 ? void 0 : _c.title) || '';
-            const prBody = ((_f = (_e = (_d = github.context) === null || _d === void 0 ? void 0 : _d.payload) === null || _e === void 0 ? void 0 : _e.pull_request) === null || _f === void 0 ? void 0 : _f.body) || '';
+            const prTitle = ((_d = (_c = (_b = github.context) === null || _b === void 0 ? void 0 : _b.payload) === null || _c === void 0 ? void 0 : _c.pull_request) === null || _d === void 0 ? void 0 : _d.title) || '';
+            const prBody = ((_g = (_f = (_e = github.context) === null || _e === void 0 ? void 0 : _e.payload) === null || _f === void 0 ? void 0 : _f.pull_request) === null || _g === void 0 ? void 0 : _g.body) || '';
             const reTitle = new RegExp(titleRegexInput, 'g');
             const reBody = new RegExp(bodyRegexInput, 'g');
             const foundTixInTitle = reTitle.test(prTitle);

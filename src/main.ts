@@ -11,10 +11,14 @@ async function run(): Promise<void> {
 
     const isCI = process.env.IS_CI === 'true'
     const token = core.getInput('token', { required: true })
-    const makePrComment = core.getInput('makePrComment', { required: false }) === 'true'
-    const titleRegexInput = core.getInput('titleRegex', { required: false }) || `^\\[([A-Z]{2,}-\\d{3,})\\]`
-    const bodyRegexInput = core.getInput('bodyRegex', { required: false }) || `\\[([A-Z]{2,}-\\d{3,})\\]`
-    const noTicketInput = core.getInput('noTicket', { required: false }) || '[no-ticket]'
+    const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true'
+    const titleRegexInput = core.getInput('title_regex', { required: false }) || `^\\[([A-Z]{2,}-\\d+)\\]`
+    const bodyRegexInput = core.getInput('body_regex', { required: false }) || `\\[([A-Z]{2,}-\\d+)\\]`
+    const noTicketInput = core.getInput('no_ticket', { required: false }) || '[no-ticket]'
+    console.log(`input make_pr_comment: ${makePrComment}`)
+    console.log(`input title_regex    : ${titleRegexInput}`)
+    console.log(`input body_regex     : ${bodyRegexInput}`)
+    console.log(`input no_ticket      : ${noTicketInput}`)
 
     const client = github.getOctokit(token)
     const prTitle: string = github.context?.payload?.pull_request?.title || ''
@@ -26,11 +30,15 @@ async function run(): Promise<void> {
     const foundTixInBody = reBody.test(prBody)
     const foundNoTixInTitle = prTitle.startsWith(noTicketInput)
     const foundNoTixInBody = prBody.includes(noTicketInput)
-    core.info(`found tix in title: ${foundTixInTitle}`)
-    core.info(`found tix in body : ${foundTixInBody}`)
-    core.info(`found no-tix in title: ${foundNoTixInTitle}`)
-    core.info(`found no-tix in body : ${foundNoTixInBody}`)
+    core.info(`found ticket in title   : ${foundTixInTitle}`)
+    core.info(`found ticket in body    : ${foundTixInBody}`)
+    core.info(`found no_ticket in title: ${foundNoTixInTitle}`)
+    core.info(`found no_ticket in body : ${foundNoTixInBody}`)
 
+    if (github.context?.eventName !== 'pull_request') {
+      core.info(`success, event is not a pull request`)
+      return
+    }
     if (foundTixInTitle && foundTixInBody) {
       core.info('success, found tix in both title and body')
       return
