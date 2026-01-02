@@ -32683,12 +32683,35 @@ module.exports = parseParams
 /******/ }
 /******/ 
 /************************************************************************/
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__nccwpck_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
 /******/ /* webpack/runtime/compat */
 /******/ 
 /******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
 /******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  b: () => (/* binding */ defaultTitleBodyRegex),
+  e: () => (/* binding */ run)
+});
 
 // EXTERNAL MODULE: ./node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(1635);
@@ -32697,60 +32720,61 @@ var github = __nccwpck_require__(4903);
 ;// CONCATENATED MODULE: external "process"
 const external_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("process");
 ;// CONCATENATED MODULE: ./lib/main.js
-/* eslint no-console: */
 
 
 
+const defaultTitleBodyRegex = /\[([a-zA-Z]{2,}-\d+)\]/;
+const defaultNoTicket = '[no-ticket]';
 async function run() {
     try {
-        core.debug(JSON.stringify(github.context));
+        (0,core.debug)(JSON.stringify(github.context));
         const isCI = external_process_namespaceObject.env.IS_CI === 'true';
-        const token = core.getInput('token', { required: true });
-        const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true';
-        const titleRegexInput = core.getInput('title_regex', { required: false }) || '^\\[([A-Z]{2,}-\\d+)\\]';
-        const bodyRegexInput = core.getInput('body_regex', { required: false }) || '\\[([A-Z]{2,}-\\d+)\\]';
-        const noTicketInput = core.getInput('no_ticket', { required: false }) || '[no-ticket]';
-        console.info(`input make_pr_comment: ${makePrComment}`);
-        console.info(`input title_regex    : ${titleRegexInput}`);
-        console.info(`input body_regex     : ${bodyRegexInput}`);
-        console.info(`input no_ticket      : ${noTicketInput}`);
-        const client = github.getOctokit(token);
-        const prTitle = github.context?.payload?.pull_request?.title || '';
-        const prBody = github.context?.payload?.pull_request?.body || '';
-        const reTitle = new RegExp(titleRegexInput, 'g');
-        const reBody = new RegExp(bodyRegexInput, 'g');
+        const token = (0,core.getInput)('token', { required: true });
+        const makePrComment = (0,core.getInput)('make_pr_comment', { required: false }) === 'true';
+        const titleRegexInput = (0,core.getInput)('title_regex', { required: false }) || defaultTitleBodyRegex;
+        const bodyRegexInput = (0,core.getInput)('body_regex', { required: false }) || defaultTitleBodyRegex;
+        const noTicketInput = (0,core.getInput)('no_ticket', { required: false }) || defaultNoTicket;
+        (0,core.info)(`input make_pr_comment: ${makePrComment}`);
+        (0,core.info)(`input title_regex    : ${titleRegexInput}`);
+        (0,core.info)(`input body_regex     : ${bodyRegexInput}`);
+        (0,core.info)(`input no_ticket      : ${noTicketInput}`);
+        const client = (0,github.getOctokit)(token);
+        const prTitle = github.context.payload.pull_request?.title || '';
+        const prBody = github.context.payload.pull_request?.body || '';
+        const reTitle = new RegExp(titleRegexInput);
+        const reBody = new RegExp(bodyRegexInput);
         const foundTixInTitle = reTitle.test(prTitle);
         const foundTixInBody = reBody.test(prBody);
-        const foundNoTixInTitle = prTitle.startsWith(noTicketInput);
+        const foundNoTixInTitle = prTitle.includes(noTicketInput);
         const foundNoTixInBody = prBody.includes(noTicketInput);
-        core.info(`found ticket in title   : ${foundTixInTitle}`);
-        core.info(`found ticket in body    : ${foundTixInBody}`);
-        core.info(`found no_ticket in title: ${foundNoTixInTitle}`);
-        core.info(`found no_ticket in body : ${foundNoTixInBody}`);
+        (0,core.info)(`found ticket in title   : ${foundTixInTitle}`);
+        (0,core.info)(`found ticket in body    : ${foundTixInBody}`);
+        (0,core.info)(`found no_ticket in title: ${foundNoTixInTitle}`);
+        (0,core.info)(`found no_ticket in body : ${foundNoTixInBody}`);
         if (github.context.eventName !== 'pull_request') {
-            core.info('success, event is not a pull request');
+            (0,core.info)('success, event is not a pull request');
             return;
         }
         if (foundTixInTitle && foundTixInBody) {
-            core.info('success, found tix in both title and body');
+            (0,core.info)('success, found tix in both title and body');
             return;
         }
         if (foundNoTixInTitle && foundNoTixInBody) {
-            core.info(`success, found ${noTicketInput} in both title and body`);
+            (0,core.info)(`success, found ${noTicketInput} in both title and body`);
             return;
         }
         if (isCI) {
-            core.info('ci mode detected. not returning failure');
+            (0,core.info)('ci mode detected. not returning failure');
             return;
         }
-        core.setFailed('missing ticket in both PR title AND body');
+        (0,core.setFailed)('missing ticket in both PR title AND body');
         if (makePrComment === true) {
             createPRComment(client);
         }
     }
-    catch (error) {
-        if (error instanceof Error)
-            core.setFailed(error.message);
+    catch (e) {
+        if (e instanceof Error)
+            (0,core.setFailed)(e.message);
     }
 }
 async function createPRComment(client) {
@@ -32763,11 +32787,13 @@ async function createPRComment(client) {
             body: 'PR title AND body does not contain a reference to a ticket.',
         });
     }
-    catch (error) {
-        core.error(`Failed to create PR comment: ${error}`);
+    catch (e) {
+        (0,core.error)(`Failed to create PR comment: ${e}`);
     }
 }
-run();
 
+var __webpack_exports__defaultTitleBodyRegex = __webpack_exports__.b;
+var __webpack_exports__run = __webpack_exports__.e;
+export { __webpack_exports__defaultTitleBodyRegex as defaultTitleBodyRegex, __webpack_exports__run as run };
 
 //# sourceMappingURL=index.js.map
