@@ -2,3 +2,39 @@
 node = "24.11.1"
 # keep in sync with packageManager in package.json
 pnpm = "10.27.0"
+
+
+[tasks.build]
+description = "compile typescript"
+run = "pnpm exec tsc"
+
+[tasks.format]
+description = "format code"
+run = "pnpm exec prettier --write **/*.ts"
+
+[tasks.lint]
+description = "lint code"
+run = "pnpm exec eslint src/**/*.ts"
+
+[tasks.package]
+description = "package into dist"
+run = """
+rm -f ./dist/*
+pnpm exec ncc build lib/main.js --source-map
+"""
+
+[tasks.test]
+description = "run tests"
+run = "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 pnpm exec jest"
+
+[tasks.all]
+description = "run everything"
+run = [
+  { task = "build" },
+  { tasks = [
+    "format",
+    "lint",
+    "test",
+  ] },
+  { task = "package" },
+]

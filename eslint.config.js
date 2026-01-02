@@ -1,17 +1,15 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
+import prettier from 'eslint-config-prettier'
 
 export default defineConfig(
   globalIgnores(['dist']),
+  prettier,
   {
   files: ['**/*.{ts,tsx}'],
   extends: [
       tseslint.configs.recommended,
   ],
-  languageOptions: {
-    ecmaVersion: 2020, // Supports modern JS features
-    sourceType: 'module', // Supports ES module imports
-  },
   rules: {
     'no-console': 'warn', // Warn on console logs (avoid in production code)
     'no-debugger': 'warn', // Warn on debugger statements
