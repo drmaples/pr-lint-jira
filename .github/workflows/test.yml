@@ -12,10 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-        with:
-          install_args: 'pnpm'
-      - run: pnpm install
-      - run: pnpm all
+      - run: mise run all
 
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
