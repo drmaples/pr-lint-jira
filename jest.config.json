@@ -1,0 +1,24 @@
+{
+  "clearMocks": true,
+  "extensionsToTreatAsEsm": [
+    ".ts"
+  ],
+  "moduleFileExtensions": [
+    "js",
+    "ts"
+  ],
+  "resolver": "ts-jest-resolver",
+  "testMatch": [
+    "**/*.test.ts"
+  ],
+  "transform": {
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        "tsconfig": "tsconfig.json",
+        "useESM": true
+      }
+    ]
+  },
+  "verbose": true
+}
