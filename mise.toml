@@ -5,7 +5,10 @@ pnpm = "10.27.0"
 
 [tasks.build]
 description = "compile typescript"
-run = "pnpm exec tsc"
+run = """
+  pnpm install
+  pnpm exec tsc
+  """
 
 [tasks.format]
 description = "format code"
@@ -18,9 +21,9 @@ run = "pnpm exec eslint src/**/*.ts"
 [tasks.package]
 description = "package into dist"
 run = """
-rm -f ./dist/*
-pnpm exec ncc build lib/main.js --source-map
-"""
+  rm -f ./dist/*
+  pnpm exec ncc build lib/main.js --source-map
+  """
 
 [tasks.test]
 description = "run tests"
@@ -30,10 +33,8 @@ run = "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 pnpm exec jest"
 description = "run everything"
 run = [
   { task = "build" },
-  { tasks = [
-    "format",
-    "lint",
-    "test",
-  ] },
+  { task = "format" },
+  { task = "lint" },
+  { task = "test" },
   { task = "package" },
 ]
