@@ -17,7 +17,6 @@ test('test runs', () => {
   try {
     cp.execSync(`node ${ip}`, { env: process.env })
   } catch (error) {
-    console.log(error.message)
-    console.log(error.stdout.toString())
+    console.log(error)
   }
 })

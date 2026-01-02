@@ -12,8 +12,8 @@ async function run(): Promise<void> {
     const isCI = process.env.IS_CI === 'true'
     const token = core.getInput('token', { required: true })
     const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true'
-    const titleRegexInput = core.getInput('title_regex', { required: false }) || `^\\[([A-Z]{2,}-\\d+)\\]`
-    const bodyRegexInput = core.getInput('body_regex', { required: false }) || `\\[([A-Z]{2,}-\\d+)\\]`
+    const titleRegexInput = core.getInput('title_regex', { required: false }) || '^\\[([A-Z]{2,}-\\d+)\\]'
+    const bodyRegexInput = core.getInput('body_regex', { required: false }) || '\\[([A-Z]{2,}-\\d+)\\]'
     const noTicketInput = core.getInput('no_ticket', { required: false }) || '[no-ticket]'
     console.log(`input make_pr_comment: ${makePrComment}`)
     console.log(`input title_regex    : ${titleRegexInput}`)
@@ -36,7 +36,7 @@ async function run(): Promise<void> {
     core.info(`found no_ticket in body : ${foundNoTixInBody}`)
 
     if (github.context?.eventName !== 'pull_request') {
-      core.info(`success, event is not a pull request`)
+      core.info('success, event is not a pull request')
       return
     }
     if (foundTixInTitle && foundTixInBody) {
@@ -48,11 +48,11 @@ async function run(): Promise<void> {
       return
     }
     if (isCI) {
-      core.info(`ci mode detected. not returning failure`)
+      core.info('ci mode detected. not returning failure')
       return
     }
 
-    core.setFailed('missing JIRA ticket in both PR title AND body')
+    core.setFailed('missing ticket in both PR title AND body')
     if (makePrComment === true) {
       createPRComment(client)
     }
@@ -68,7 +68,7 @@ async function createPRComment(client: InstanceType<typeof GitHub>): Promise<voi
       owner: github.context.issue.owner,
       repo: github.context.issue.repo,
       issue_number: github.context.issue.number,
-      body: 'PR title AND body does not contain a reference to a JIRA ticket.'
+      body: 'PR title AND body does not contain a reference to a ticket.'
     })
   } catch (error) {
     core.error(`Failed to create PR comment: ${error}`)
