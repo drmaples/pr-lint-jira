@@ -18,9 +18,9 @@ COPY app app
 RUN go build -o=/go/bin ./app/cmd/...
 
 # ----------------------------------------
-# must use root user :(
+# cannot use scratch or run as non root user :(
 # https://docs.github.com/en/actions/reference/workflows-and-actions/dockerfile-support
-FROM scratch
+FROM gcr.io/distroless/static-debian13
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/pr-lint-jira .
