@@ -33,6 +33,12 @@ func getRegex(reString string, defaultRe string) (*regexp.Regexp, error) {
 }
 
 func Run() error {
+	fmt.Println("========== env ==========")
+	for _, e := range os.Environ() {
+		fmt.Printf("%#v\n", e)
+	}
+	fmt.Println("========== env ==========")
+
 	token := getInputValue(tokenKey)
 
 	makePRComment, err := strconv.ParseBool(strings.ToLower(getInputValue(makePRCommentKey)))
@@ -63,10 +69,6 @@ func Run() error {
 	fmt.Printf("titleRegex:    %#v\n", titleRegex)
 	fmt.Printf("bodyRegex:     %#v\n", bodyRegex)
 	fmt.Printf("noTicket:      %#v\n", noTicket)
-	fmt.Println("----")
-	for e := range os.Environ() {
-		fmt.Printf("%#v\n", e)
-	}
 	fmt.Println("==========")
 
 	return nil
