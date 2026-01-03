@@ -41,7 +41,7 @@ type GHContext struct {
 
 func newGHContext() (*GHContext, error) {
 	fullRepo := os.Getenv("GITHUB_REPOSITORY") // example: drmaples/pr-lint-jira
-	nuggets := strings.SplitN(fullRepo, "/", 2)
+	owner, repo, _ := strings.Cut(fullRepo, "/")
 
 	c := &GHContext{
 		EventPath:  os.Getenv("GITHUB_EVENT_PATH"),
@@ -49,8 +49,8 @@ func newGHContext() (*GHContext, error) {
 		SHA:        os.Getenv("GITHUB_SHA"),
 		Ref:        os.Getenv("GITHUB_REF"),
 		Repository: fullRepo,
-		Owner:      nuggets[0],
-		Repo:       nuggets[1],
+		Owner:      owner,
+		Repo:       repo,
 	}
 
 	if c.EventPath != "" {

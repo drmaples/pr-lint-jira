@@ -14,7 +14,3 @@ run = "golangci-lint run -v ./..."
 [tasks.test]
 description = "run tests"
 run = "go test ./..."
-
-[tasks.all]
-description = "run everything"
-run = [{ tasks = ["test", "lint", "build"] }]

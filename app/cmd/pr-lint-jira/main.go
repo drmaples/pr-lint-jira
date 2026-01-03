@@ -6,7 +6,6 @@ import (
 	"os"
 	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/drmaples/pr-lint-jira/app/github"
@@ -49,6 +48,9 @@ func run(ctx context.Context) error {
 	}
 
 	token := getInputValue(tokenKey)
+	if token == "" {
+		return fmt.Errorf("missing token")
+	}
 
 	gh := github.NewGithub(token)
 	ghCtx, err := gh.Context()
@@ -60,10 +62,7 @@ func run(ctx context.Context) error {
 		fmt.Printf("%#v\n", ghCtx)
 	}
 
-	makePRComment, err := strconv.ParseBool(strings.ToLower(getInputValue(makePRCommentKey)))
-	if err != nil {
-		return fmt.Errorf("problem getting %s input: %w", makePRCommentKey, err)
-	}
+	makePRComment := strings.ToLower(getInputValue(makePRCommentKey)) == "true"
 
 	titleRegex, err := getRegex(getInputValue(titleRegexKey), defaultTitleBodyRegex)
 	if err != nil {

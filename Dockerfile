@@ -8,10 +8,6 @@ RUN update-ca-certificates
 
 WORKDIR /code
 
-# vendor dir may not exist, thus the [r] trick.
-# https://stackoverflow.com/questions/31528384/conditional-copy-add-in-dockerfile
-# COPY vendo[r] vendor
-
 COPY go.mod go.sum ./
 COPY app app
 
