@@ -1,4 +1,4 @@
-name: 'pr-lint-jira'
+name: 'drmaples/pr-lint-jira'
 description: 'Lint PR to ensure a ticket is found in both the title and the body'
 
 inputs:
@@ -20,7 +20,7 @@ inputs:
     required: false
 
 runs:
-  using: 'node24'
+  using: 'node20'
   main: 'dist/index.js'
 
 branding:

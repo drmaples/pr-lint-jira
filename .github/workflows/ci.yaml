@@ -7,6 +7,15 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
+  # gatekeeper job to know when CI is done. used by "Require status checks to pass before merging" setting
+  ci_done:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - test
+    steps:
+      - run: echo "all done"
+
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:

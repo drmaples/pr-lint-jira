@@ -7,6 +7,9 @@ const defaultNoTicket = '[no-ticket]'
 
 export async function run(): Promise<void> {
   try {
+    core.info('starting pr lint')
+    // eslint-disable-next-line no-console
+    console.info('starting pr lint')
     core.debug(JSON.stringify(context))
 
     const isCI = env.IS_CI === 'true'

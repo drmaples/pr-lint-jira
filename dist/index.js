@@ -32727,6 +32727,9 @@ const defaultTitleBodyRegex = /\[([a-zA-Z]{2,}-\d+)\]/;
 const defaultNoTicket = '[no-ticket]';
 async function run() {
     try {
+        core.info('starting pr lint');
+        // eslint-disable-next-line no-console
+        console.info('starting pr lint');
         core.debug(JSON.stringify(github.context));
         const isCI = external_process_namespaceObject.env.IS_CI === 'true';
         const token = core.getInput('token', { required: true });
