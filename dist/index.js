@@ -32769,7 +32769,7 @@ async function run() {
         }
         (0,core.setFailed)('missing ticket in both PR title AND body');
         if (makePrComment === true) {
-            createPRComment(client);
+            createPRComment(client, github.context);
         }
     }
     catch (e) {
@@ -32777,13 +32777,13 @@ async function run() {
             (0,core.setFailed)(e.message);
     }
 }
-async function createPRComment(client) {
+async function createPRComment(client, ctx) {
     try {
         // https://octokit.github.io/rest.js/v18#pulls-create-review-comment
         await client.rest.issues.createComment({
-            owner: github.context.issue.owner,
-            repo: github.context.issue.repo,
-            issue_number: github.context.issue.number,
+            owner: ctx.issue.owner,
+            repo: ctx.issue.repo,
+            issue_number: ctx.issue.number,
             body: 'PR title AND body does not contain a reference to a ticket.',
         });
     }

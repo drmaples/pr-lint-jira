@@ -54,20 +54,20 @@ export async function run(): Promise<void> {
 
     setFailed('missing ticket in both PR title AND body')
     if (makePrComment === true) {
-      createPRComment(client)
+      createPRComment(client, context)
     }
   } catch (e) {
     if (e instanceof Error) setFailed(e.message)
   }
 }
 
-async function createPRComment(client: ReturnType<typeof getOctokit>): Promise<void> {
+async function createPRComment(client: ReturnType<typeof getOctokit>, ctx: typeof context): Promise<void> {
   try {
     // https://octokit.github.io/rest.js/v18#pulls-create-review-comment
     await client.rest.issues.createComment({
-      owner: context.issue.owner,
-      repo: context.issue.repo,
-      issue_number: context.issue.number,
+      owner: ctx.issue.owner,
+      repo: ctx.issue.repo,
+      issue_number: ctx.issue.number,
       body: 'PR title AND body does not contain a reference to a ticket.',
     })
   } catch (e) {
