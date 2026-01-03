@@ -1,26 +1,33 @@
 import { expect, test } from '@jest/globals'
-import * as process from 'process'
-import * as cp from 'child_process'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { env } from 'process'
+import { defaultTitleBodyRegex, run } from '../src/main'
 
-const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
-const __dirname = path.dirname(__filename) // get the name of the directory
+test('test default title body regex', () => {
+  const re = new RegExp(defaultTitleBodyRegex.source)
+  expect(re.test('foo')).toEqual(false) // do better
+  expect(re.test('FOO-123')).toEqual(false) // no brackets
+  expect(re.test('[f-123]')).toEqual(false) // min 2 char slug
+  expect(re.test('[hi-]')).toEqual(false) // need a digit after the slug
+  expect(re.test('nothing in here')).toEqual(false) // no tix at all
+  expect(re.test('what [is-going] on here')).toEqual(false) // no tix at all
 
-test('test regex', () => {
-  const re = new RegExp('\\[([A-Z]{2,}-\\d+)\\]', 'g')
-  expect(re.test('foo')).toEqual(false)
-  expect(re.test('FOO-123')).toEqual(false)
+  expect(re.test('[HI-7]')).toEqual(true)
   expect(re.test('[FOO-123]')).toEqual(true)
+  expect(re.test('[zzz-123]')).toEqual(true)
+  expect(re.test('[zZz-123]')).toEqual(true)
+  expect(re.test('[XXXXXXXXXX-0000000000]')).toEqual(true)
+  expect(re.test('start junk [zZz-123]')).toEqual(true)
+  expect(re.test('[zZz-123] end junk')).toEqual(true)
+  expect(re.test('start junk [zZz-123] end junk')).toEqual(true)
 })
 
-test('test runs', () => {
-  process.env['IS_CI'] = 'true'
-  process.env['INPUT_TOKEN'] = 'xxxxxx'
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
+test('test runs', async () => {
+  env['IS_CI'] = 'true'
+  env['INPUT_TOKEN'] = 'xxxxxx'
+
   try {
-    cp.execSync(`node ${ip}`, { env: process.env })
-  } catch (error) {
-    console.info(error)
+    await run()
+  } catch (e) {
+    console.error('>>>>>', e)
   }
 })
