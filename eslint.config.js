@@ -1,19 +1,14 @@
-import { defineConfig, globalIgnores } from 'eslint/config';
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
 
-export default defineConfig(
-  globalIgnores(['dist']),
-  prettier,
-  {
+export default defineConfig(globalIgnores(['dist']), prettier, {
   files: ['**/*.{ts,tsx}'],
-  extends: [
-      tseslint.configs.recommended,
-  ],
+  extends: [tseslint.configs.recommended],
   rules: {
-    'no-console': 'warn', // Warn on console logs (avoid in production code)
-    'no-debugger': 'warn', // Warn on debugger statements
-    'no-unused-vars': 'off', // Disable built-in no-unused-vars
+    'no-console': 'error', // error on console logs (avoid in production code)
+    'no-debugger': 'error', // error on debugger statements
+    'no-unused-vars': 'error', // error on built-in no-unused-vars
     '@typescript-eslint/no-unused-vars': ['error'], // Enforce no unused vars in TypeScript
     '@typescript-eslint/no-explicit-any': 'error', // Disallow 'any' type
     '@typescript-eslint/explicit-module-boundary-types': 'error', // Enforce return types on functions
@@ -24,7 +19,7 @@ export default defineConfig(
     '@typescript-eslint/member-ordering': 'error', // Enforce consistent member ordering
     '@typescript-eslint/no-inferrable-types': 'error', // Prevent explicit types when they can be inferred
     '@typescript-eslint/no-var-requires': 'error', // Disallow require() calls
-    'semi': ['error', 'never'], // Enforce semicolons at the end of statements
-    'quotes': ['error', 'single'], // Enforce single quotes
+    semi: ['error', 'never'], // Enforce semicolons at the end of statements
+    quotes: ['error', 'single'], // Enforce single quotes
   },
-});
+})
