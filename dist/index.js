@@ -32727,17 +32727,17 @@ const defaultTitleBodyRegex = /\[([a-zA-Z]{2,}-\d+)\]/;
 const defaultNoTicket = '[no-ticket]';
 async function run() {
     try {
-        (0,core.debug)(JSON.stringify(github.context));
+        core.debug(JSON.stringify(github.context));
         const isCI = external_process_namespaceObject.env.IS_CI === 'true';
-        const token = (0,core.getInput)('token', { required: true });
-        const makePrComment = (0,core.getInput)('make_pr_comment', { required: false }) === 'true';
-        const titleRegexInput = (0,core.getInput)('title_regex', { required: false }) || defaultTitleBodyRegex;
-        const bodyRegexInput = (0,core.getInput)('body_regex', { required: false }) || defaultTitleBodyRegex;
-        const noTicketInput = (0,core.getInput)('no_ticket', { required: false }) || defaultNoTicket;
-        (0,core.info)(`input make_pr_comment: ${makePrComment}`);
-        (0,core.info)(`input title_regex    : ${titleRegexInput}`);
-        (0,core.info)(`input body_regex     : ${bodyRegexInput}`);
-        (0,core.info)(`input no_ticket      : ${noTicketInput}`);
+        const token = core.getInput('token', { required: true });
+        const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true';
+        const titleRegexInput = core.getInput('title_regex', { required: false }) || defaultTitleBodyRegex;
+        const bodyRegexInput = core.getInput('body_regex', { required: false }) || defaultTitleBodyRegex;
+        const noTicketInput = core.getInput('no_ticket', { required: false }) || defaultNoTicket;
+        core.info(`input make_pr_comment: ${makePrComment}`);
+        core.info(`input title_regex    : ${titleRegexInput}`);
+        core.info(`input body_regex     : ${bodyRegexInput}`);
+        core.info(`input no_ticket      : ${noTicketInput}`);
         const client = (0,github.getOctokit)(token);
         const prTitle = github.context.payload.pull_request?.title || '';
         const prBody = github.context.payload.pull_request?.body || '';
@@ -32747,34 +32747,34 @@ async function run() {
         const foundTixInBody = reBody.test(prBody);
         const foundNoTixInTitle = prTitle.includes(noTicketInput);
         const foundNoTixInBody = prBody.includes(noTicketInput);
-        (0,core.info)(`found ticket in title   : ${foundTixInTitle}`);
-        (0,core.info)(`found ticket in body    : ${foundTixInBody}`);
-        (0,core.info)(`found no_ticket in title: ${foundNoTixInTitle}`);
-        (0,core.info)(`found no_ticket in body : ${foundNoTixInBody}`);
+        core.info(`found ticket in title   : ${foundTixInTitle}`);
+        core.info(`found ticket in body    : ${foundTixInBody}`);
+        core.info(`found no_ticket in title: ${foundNoTixInTitle}`);
+        core.info(`found no_ticket in body : ${foundNoTixInBody}`);
         if (github.context.eventName !== 'pull_request') {
-            (0,core.info)('success, event is not a pull request');
+            core.info('success, event is not a pull request');
             return;
         }
         if (foundTixInTitle && foundTixInBody) {
-            (0,core.info)('success, found tix in both title and body');
+            core.info('success, found tix in both title and body');
             return;
         }
         if (foundNoTixInTitle && foundNoTixInBody) {
-            (0,core.info)(`success, found ${noTicketInput} in both title and body`);
+            core.info(`success, found ${noTicketInput} in both title and body`);
             return;
         }
         if (isCI) {
-            (0,core.info)('ci mode detected. not returning failure');
+            core.info('ci mode detected. not returning failure');
             return;
         }
-        (0,core.setFailed)('missing ticket in both PR title AND body');
+        core.setFailed('missing ticket in both PR title AND body');
         if (makePrComment === true) {
             createPRComment(client, github.context);
         }
     }
     catch (e) {
         if (e instanceof Error)
-            (0,core.setFailed)(e.message);
+            core.setFailed(e.message);
     }
 }
 async function createPRComment(client, ctx) {
@@ -32788,7 +32788,7 @@ async function createPRComment(client, ctx) {
         });
     }
     catch (e) {
-        (0,core.error)(`Failed to create PR comment: ${e}`);
+        core.error(`Failed to create PR comment: ${e}`);
     }
 }
 

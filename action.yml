@@ -10,17 +10,14 @@ inputs:
     required: false
     default: 'false'
   title_regex:
-    description: regex that matches ticket in PR title. defaults to starting with ticket in square brackets.
+    description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see src/main.ts for default value
     required: false
-    default: '^\[([A-Z]{2,})(-)(\d+)\]'
   body_regex:
-    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body
+    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body. see src/main.ts for default value
     required: false
-    default: '\[([A-Z]{2,})(-)(\d+)\]'
   no_ticket:
-    description: 'your PR has no associated ticket. use this string in both the PR title and body to pass linting'
+    description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see src/main.ts for default value
     required: false
-    default: '[no-ticket]'
 
 runs:
   using: 'node24'
