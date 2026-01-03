@@ -1,4 +1,4 @@
-import { debug, info, error, getInput, setFailed } from '@actions/core'
+import * as core from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import { env } from 'process'
 
@@ -7,18 +7,18 @@ const defaultNoTicket = '[no-ticket]'
 
 export async function run(): Promise<void> {
   try {
-    debug(JSON.stringify(context))
+    core.debug(JSON.stringify(context))
 
     const isCI = env.IS_CI === 'true'
-    const token = getInput('token', { required: true })
-    const makePrComment = getInput('make_pr_comment', { required: false }) === 'true'
-    const titleRegexInput = getInput('title_regex', { required: false }) || defaultTitleBodyRegex
-    const bodyRegexInput = getInput('body_regex', { required: false }) || defaultTitleBodyRegex
-    const noTicketInput = getInput('no_ticket', { required: false }) || defaultNoTicket
-    info(`input make_pr_comment: ${makePrComment}`)
-    info(`input title_regex    : ${titleRegexInput}`)
-    info(`input body_regex     : ${bodyRegexInput}`)
-    info(`input no_ticket      : ${noTicketInput}`)
+    const token = core.getInput('token', { required: true })
+    const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true'
+    const titleRegexInput = core.getInput('title_regex', { required: false }) || defaultTitleBodyRegex
+    const bodyRegexInput = core.getInput('body_regex', { required: false }) || defaultTitleBodyRegex
+    const noTicketInput = core.getInput('no_ticket', { required: false }) || defaultNoTicket
+    core.info(`input make_pr_comment: ${makePrComment}`)
+    core.info(`input title_regex    : ${titleRegexInput}`)
+    core.info(`input body_regex     : ${bodyRegexInput}`)
+    core.info(`input no_ticket      : ${noTicketInput}`)
 
     const client = getOctokit(token)
     const prTitle: string = context.payload.pull_request?.title || ''
@@ -30,34 +30,34 @@ export async function run(): Promise<void> {
     const foundTixInBody = reBody.test(prBody)
     const foundNoTixInTitle = prTitle.includes(noTicketInput)
     const foundNoTixInBody = prBody.includes(noTicketInput)
-    info(`found ticket in title   : ${foundTixInTitle}`)
-    info(`found ticket in body    : ${foundTixInBody}`)
-    info(`found no_ticket in title: ${foundNoTixInTitle}`)
-    info(`found no_ticket in body : ${foundNoTixInBody}`)
+    core.info(`found ticket in title   : ${foundTixInTitle}`)
+    core.info(`found ticket in body    : ${foundTixInBody}`)
+    core.info(`found no_ticket in title: ${foundNoTixInTitle}`)
+    core.info(`found no_ticket in body : ${foundNoTixInBody}`)
 
     if (context.eventName !== 'pull_request') {
-      info('success, event is not a pull request')
+      core.info('success, event is not a pull request')
       return
     }
     if (foundTixInTitle && foundTixInBody) {
-      info('success, found tix in both title and body')
+      core.info('success, found tix in both title and body')
       return
     }
     if (foundNoTixInTitle && foundNoTixInBody) {
-      info(`success, found ${noTicketInput} in both title and body`)
+      core.info(`success, found ${noTicketInput} in both title and body`)
       return
     }
     if (isCI) {
-      info('ci mode detected. not returning failure')
+      core.info('ci mode detected. not returning failure')
       return
     }
 
-    setFailed('missing ticket in both PR title AND body')
+    core.setFailed('missing ticket in both PR title AND body')
     if (makePrComment === true) {
       createPRComment(client, context)
     }
   } catch (e) {
-    if (e instanceof Error) setFailed(e.message)
+    if (e instanceof Error) core.setFailed(e.message)
   }
 }
 
@@ -71,6 +71,6 @@ async function createPRComment(client: ReturnType<typeof getOctokit>, ctx: typeo
       body: 'PR title AND body does not contain a reference to a ticket.',
     })
   } catch (e) {
-    error(`Failed to create PR comment: ${e}`)
+    core.error(`Failed to create PR comment: ${e}`)
   }
 }
