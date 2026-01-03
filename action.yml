@@ -10,18 +10,18 @@ inputs:
     required: false
     default: 'false'
   title_regex:
-    description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see src/main.ts for default value
+    description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see source code for default value
     required: false
   body_regex:
-    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body. see src/main.ts for default value
+    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body. see source code for default value
     required: false
   no_ticket:
-    description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see src/main.ts for default value
+    description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see source code for default value
     required: false
 
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: 'docker'
+  image: 'Dockerfile'
 
 branding:
   icon: 'git-pull-request'
