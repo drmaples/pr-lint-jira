@@ -20,7 +20,7 @@ RUN go build -o=/go/bin ./app/cmd/...
 # ----------------------------------------
 # cannot use scratch or run as non root user :(
 # https://docs.github.com/en/actions/reference/workflows-and-actions/dockerfile-support
-FROM gcr.io/distroless/static-debian13
+FROM alpine:3.23.2
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/pr-lint-jira .
