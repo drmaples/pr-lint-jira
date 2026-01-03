@@ -5,7 +5,6 @@ ENV CGO_ENABLED=0
 ENV GOOS=linux
 
 RUN update-ca-certificates
-RUN useradd -u 10001 scratchuser
 
 WORKDIR /code
 
@@ -19,14 +18,11 @@ COPY app app
 RUN go build -o=/go/bin ./app/cmd/...
 
 # ----------------------------------------
+# must use root user :(
+# https://docs.github.com/en/actions/reference/workflows-and-actions/dockerfile-support
 FROM scratch
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/pr-lint-jira .
 
-# dont run as root in a container:
-# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
-COPY --from=builder /etc/passwd /etc/passwd
-USER scratchuser
-
-ENTRYPOINT ["./pr-lint-jira"]
+CMD ["./pr-lint-jira"]
