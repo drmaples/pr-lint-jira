@@ -25,8 +25,7 @@ inputs:
 
 runs:
   using: "docker"
-  # switch this to a pre-built ghcr image
-  image: "Dockerfile"
+  image: ghcr.io/drmaples/pr-lint-jira:switch-to-go
 
 branding:
   icon: "git-pull-request"
