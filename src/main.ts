@@ -8,9 +8,9 @@ const defaultNoTicket = '[no-ticket]'
 export async function run(): Promise<void> {
   try {
     // eslint-disable-next-line no-console
-    console.info('starting pr lint:', env)
+    console.log('starting pr lint:', env)
     // eslint-disable-next-line no-console
-    console.info(JSON.stringify(context))
+    console.log(JSON.stringify(context))
 
     const isCI = env.IS_CI === 'true'
     const token = core.getInput('token', { required: true })
