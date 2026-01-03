@@ -25,4 +25,4 @@ FROM alpine:3.23.2
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/pr-lint-jira .
 
-CMD ["./pr-lint-jira"]
+CMD ["/pr-lint-jira"]

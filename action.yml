@@ -1,14 +1,14 @@
-name: 'drmaples/pr-lint-jira'
-description: 'Lint PR to ensure a ticket is found in both the title and the body'
+name: "drmaples/pr-lint-jira"
+description: "Lint PR to ensure a ticket is found in both the title and the body"
 
 inputs:
   token:
-    description: 'GitHub authentication token'
+    description: "GitHub authentication token"
     required: true
   make_pr_comment:
     description: if enabled, create a PR comment on missing ticket
     required: false
-    default: 'false'
+    default: "false"
   title_regex:
     description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see source code for default value
     required: false
@@ -20,9 +20,10 @@ inputs:
     required: false
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  # switch this to a pre-built ghcr image
+  image: "Dockerfile"
 
 branding:
-  icon: 'git-pull-request'
-  color: 'blue'
+  icon: "git-pull-request"
+  color: "blue"
