@@ -29,4 +29,4 @@ COPY --from=builder /go/bin/pr-lint-jira .
 COPY --from=builder /etc/passwd /etc/passwd
 USER scratchuser
 
-CMD ["./pr-lint-jira"]
+ENTRYPOINT ["./pr-lint-jira"]
