@@ -25,7 +25,7 @@ inputs:
 
 runs:
   using: "docker"
-  image: ghcr.io/drmaples/pr-lint-jira:switch-to-go
+  image: docker://ghcr.io/drmaples/pr-lint-jira:switch-to-go
 
 branding:
   icon: "git-pull-request"
