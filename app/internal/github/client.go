@@ -6,7 +6,7 @@ import (
 )
 
 type Iface interface {
-	Context() GHContext
+	Context() (*GHContext, error)
 	CreateComment(comment string) error
 }
 
@@ -21,8 +21,8 @@ func NewGithub(token string) Iface {
 	}
 }
 
-func (a *api) Context() GHContext {
-	gh := GHContext{
+func (a *api) Context() (*GHContext, error) {
+	gh := &GHContext{
 		EventPath: os.Getenv("GITHUB_EVENT_PATH"),
 		EventName: os.Getenv("GITHUB_EVENT_NAME"),
 		SHA:       os.Getenv("GITHUB_SHA"),
@@ -30,11 +30,16 @@ func (a *api) Context() GHContext {
 	}
 
 	if gh.EventPath != "" {
-		// do nothing
-		fmt.Println("empty path")
+		content, err := os.ReadFile(gh.EventPath)
+		if err != nil {
+			return nil, fmt.Errorf("problem reading github event path: %w", err)
+		}
+		fmt.Println("==========")
+		fmt.Printf("%#v\n", string(content))
+		fmt.Println("==========")
 	}
 
-	return gh
+	return gh, nil
 }
 
 func (a *api) CreateComment(comment string) error {
