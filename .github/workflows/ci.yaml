@@ -67,12 +67,18 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/setup-buildx-action@v3
+      - run: |
+          SHORT_SHA=${GITHUB_SHA::7}
+          DATE=$(date +%Y%m%d)
+          TAG="${DATE}_${SHORT_SHA}"
+          echo "DOCKER_TAG=$TAG" >> $GITHUB_ENV
       - uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
-            github.com/drmaples/pr-lint-jira:${{ github.sha }}
-            github.com/drmaples/pr-lint-jira:${{ github.head_ref }}
+            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:${{ github.head_ref }}
 
   test_install: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
