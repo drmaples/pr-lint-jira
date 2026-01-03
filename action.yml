@@ -3,7 +3,7 @@ description: "Lint PR to ensure a ticket is found in both the title and the body
 
 inputs:
   token:
-    description: "GitHub authentication token"
+    description: gitHub authentication token used to make a PR comment if make_pr_comment is enabled
     required: true
   make_pr_comment:
     description: if enabled, create a PR comment on missing ticket
@@ -18,6 +18,10 @@ inputs:
   no_ticket:
     description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see source code for default value
     required: false
+  log_level:
+    description: info | debug
+    required: false
+    default: info
 
 runs:
   using: "docker"

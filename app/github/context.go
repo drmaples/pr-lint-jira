@@ -8,6 +8,7 @@ import (
 )
 
 // inspired by https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
+// payload ref: https://docs.github.com/en/graphql/reference/objects#pullrequest
 
 type PullRequest struct {
 	Title  string `json:"title"`
@@ -28,23 +29,34 @@ type Payload struct {
 }
 
 type GHContext struct {
-	Payload   Payload
-	EventName string
-	EventPath string
-	SHA       string
-	Ref       string
+	Payload    Payload
+	EventName  string
+	EventPath  string
+	SHA        string
+	Ref        string
+	Repository string
+	Owner      string
+	Repo       string
 }
 
 func newGHContext() (*GHContext, error) {
+	fullRepo := os.Getenv("GITHUB_REPOSITORY") // example: drmaples/pr-lint-jira
+	nuggets := strings.SplitN(fullRepo, "/", 2)
+
 	c := &GHContext{
-		EventPath: os.Getenv("GITHUB_EVENT_PATH"),
-		EventName: os.Getenv("GITHUB_EVENT_NAME"),
-		SHA:       os.Getenv("GITHUB_SHA"),
-		Ref:       os.Getenv("GITHUB_REF"),
+		EventPath:  os.Getenv("GITHUB_EVENT_PATH"),
+		EventName:  os.Getenv("GITHUB_EVENT_NAME"),
+		SHA:        os.Getenv("GITHUB_SHA"),
+		Ref:        os.Getenv("GITHUB_REF"),
+		Repository: fullRepo,
+		Owner:      nuggets[0],
+		Repo:       nuggets[1],
 	}
 
 	if c.EventPath != "" {
-		c.loadPayload()
+		if err := c.loadPayload(); err != nil {
+			return nil, err
+		}
 	}
 	return c, nil
 }
@@ -54,27 +66,16 @@ func (c *GHContext) loadPayload() error {
 	if err != nil {
 		return fmt.Errorf("problem reading github event path: %w", err)
 	}
-
 	if err := json.Unmarshal(content, &c.Payload); err != nil {
 		return fmt.Errorf("problem with payload unmarshal: %w", err)
 	}
 	return nil
 }
 
-func (c *GHContext) Issue() (string, string, int) {
-	owner, repo := c.Repo()
-
-	number := 0
-	if c.Payload.Issue.Number > 0 {
-		number = c.Payload.Issue.Number
-	} else if c.Payload.PullRequest.Number > 0 {
-		number = c.Payload.PullRequest.Number
+func (c *GHContext) PRNumber() int {
+	// depending on the event type this can move around
+	if c.Payload.PullRequest.Number > 0 {
+		return c.Payload.PullRequest.Number
 	}
-	return owner, repo, number
-}
-
-func (c *GHContext) Repo() (string, string) {
-	full := os.Getenv("GITHUB_REPOSITORY")
-	nuggets := strings.SplitN(full, "/", 2)
-	return nuggets[0], nuggets[1]
+	return c.Payload.Issue.Number
 }
