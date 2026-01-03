@@ -1,6 +1,7 @@
 package github
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -34,9 +35,10 @@ func (a *api) Context() (*GHContext, error) {
 		if err != nil {
 			return nil, fmt.Errorf("problem reading github event path: %w", err)
 		}
-		fmt.Println("==========")
-		fmt.Printf("%#v\n", string(content))
-		fmt.Println("==========")
+
+		if err := json.Unmarshal(content, &gh.Payload); err != nil {
+			return nil, fmt.Errorf("problem with payload unmarshal: %w", err)
+		}
 	}
 
 	return gh, nil

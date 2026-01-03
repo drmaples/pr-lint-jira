@@ -44,7 +44,13 @@ func Run() error {
 	token := getInputValue(tokenKey)
 
 	gh := github.NewGithub(token)
-	gh.Context()
+	ghCtx, err := gh.Context()
+	if err != nil {
+		return err
+	}
+	fmt.Println("==========")
+	fmt.Printf("%#v\n", ghCtx)
+	fmt.Println("==========")
 
 	makePRComment, err := strconv.ParseBool(strings.ToLower(getInputValue(makePRCommentKey)))
 	if err != nil {
