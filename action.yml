@@ -6,7 +6,7 @@ inputs:
     description: gitHub authentication token used to make a PR comment if make_pr_comment is enabled
     required: true
   make_pr_comment:
-    description: if enabled, create a PR comment on missing ticket
+    description: if enabled, create a PR comment on missing ticket. requires "issues: write" and "pull-requests: write" permissions if true
     required: false
     default: "false"
   title_regex:

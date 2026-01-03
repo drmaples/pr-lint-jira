@@ -1,4 +1,5 @@
 # pr-lint-jira
+
 Lint PR to ensure a ticket is found in both the title and the body
 
 ## Usage
@@ -14,7 +15,13 @@ name: PR lint
 
 on:
   pull_request:
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+    types: ["opened", "edited", "reopened", "synchronize"]
+
+# required permissions IF make_pr_comment is set to true.
+# by default these extra permissions are not needed
+permissions:
+  issues: write
+  pull-requests: write
 
 jobs:
   title:
