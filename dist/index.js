@@ -31728,9 +31728,9 @@ const defaultNoTicket = '[no-ticket]';
 async function run() {
     try {
         // eslint-disable-next-line no-console
-        console.info('starting pr lint:', external_process_namespaceObject.env);
+        console.log('starting pr lint:', external_process_namespaceObject.env);
         // eslint-disable-next-line no-console
-        console.info(JSON.stringify(github.context));
+        console.log(JSON.stringify(github.context));
         const isCI = external_process_namespaceObject.env.IS_CI === 'true';
         const token = core.getInput('token', { required: true });
         const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true';
