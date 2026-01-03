@@ -17,10 +17,14 @@ COPY app app
 
 RUN go build -o=/go/bin ./app/cmd/...
 
-# ----------------------------------------
-# cannot use scratch or run as non root user :(
-# https://docs.github.com/en/actions/reference/workflows-and-actions/dockerfile-support
-FROM alpine:3.23.2
+########################
+# NOTE:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/dockerfile-support
+#   must run as root user
+#   do not use workdir, GHA sets it
+#   use absolute path for the cmd or entrypoint since GHA modifies workdir
+########################
+FROM scratch
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/pr-lint-jira .
