@@ -35,6 +35,7 @@ func TestNewGHContext_WithEnvironmentVariables(t *testing.T) {
 }
 
 func TestNewGHContext_WithMissingRepository(t *testing.T) {
+	t.Setenv("GITHUB_REPOSITORY", "")
 	ctx, err := newGHContext()
 	require.NoError(t, err)
 
