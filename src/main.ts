@@ -9,8 +9,9 @@ export async function run(): Promise<void> {
   try {
     core.info('starting pr lint')
     // eslint-disable-next-line no-console
-    console.info('starting pr lint')
-    core.debug(JSON.stringify(context))
+    console.info('starting pr lint:', env)
+    // eslint-disable-next-line no-console
+    console.info(JSON.stringify(context))
 
     const isCI = env.IS_CI === 'true'
     const token = core.getInput('token', { required: true })

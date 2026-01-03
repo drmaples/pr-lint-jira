@@ -32729,8 +32729,9 @@ async function run() {
     try {
         core.info('starting pr lint');
         // eslint-disable-next-line no-console
-        console.info('starting pr lint');
-        core.debug(JSON.stringify(github.context));
+        console.info('starting pr lint:', external_process_namespaceObject.env);
+        // eslint-disable-next-line no-console
+        console.info(JSON.stringify(github.context));
         const isCI = external_process_namespaceObject.env.IS_CI === 'true';
         const token = core.getInput('token', { required: true });
         const makePrComment = core.getInput('make_pr_comment', { required: false }) === 'true';
