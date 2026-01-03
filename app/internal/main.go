@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/drmaples/pr-lint-jira/app/internal/github"
 )
 
 const (
@@ -40,6 +42,9 @@ func Run() error {
 	fmt.Println("========== env ==========")
 
 	token := getInputValue(tokenKey)
+
+	gh := github.NewGithub(token)
+	gh.Context()
 
 	makePRComment, err := strconv.ParseBool(strings.ToLower(getInputValue(makePRCommentKey)))
 	if err != nil {
