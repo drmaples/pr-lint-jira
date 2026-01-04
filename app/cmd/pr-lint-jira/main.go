@@ -25,6 +25,15 @@ const (
 	logLevelKey      = "log_level"
 )
 
+// https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#grouping-log-lines
+func startGroup(title string) {
+	fmt.Printf("::group::%s\n", title)
+}
+
+func endGroup() {
+	fmt.Println("::endgroup::")
+}
+
 func getInputValue(key string) string {
 	envVarKey := strings.ToUpper(fmt.Sprintf("%s%s", envVarPrefix, key))
 	return strings.TrimSpace(os.Getenv(envVarKey))
@@ -41,10 +50,11 @@ func run(ctx context.Context) error {
 	debug := getInputValue(logLevelKey) == "debug"
 
 	if debug {
-		fmt.Println("passed env vars:")
+		startGroup("passed env vars")
 		for _, e := range sort.StringSlice(os.Environ()) {
 			fmt.Println("\t", e)
 		}
+		endGroup()
 	}
 
 	token := getInputValue(tokenKey)
@@ -58,8 +68,9 @@ func run(ctx context.Context) error {
 		return err
 	}
 	if debug {
-		fmt.Println("parsed github event context:")
+		startGroup("parsed github event context")
 		fmt.Printf("%#v\n", ghCtx)
+		endGroup()
 	}
 
 	makePRComment := strings.ToLower(getInputValue(makePRCommentKey)) == "true"
@@ -79,10 +90,12 @@ func run(ctx context.Context) error {
 		noTicket = defaultNoTicket
 	}
 
+	startGroup("inputs")
 	fmt.Printf("input make_pr_comment : %#v\n", makePRComment)
 	fmt.Printf("input title_regex     : %q\n", titleRegex)
 	fmt.Printf("input body_regex      : %q\n", bodyRegex)
 	fmt.Printf("input no_ticket       : %#v\n", noTicket)
+	endGroup()
 
 	prTitle := ghCtx.Payload.PullRequest.Title
 	prBody := ghCtx.Payload.PullRequest.Body
@@ -92,10 +105,12 @@ func run(ctx context.Context) error {
 	foundNoTixInTitle := strings.Contains(prTitle, noTicket)
 	foundNoTixInBody := strings.Contains(prBody, noTicket)
 
+	startGroup("results")
 	fmt.Println("found ticket in title    :", foundTixInTitle)
 	fmt.Println("found ticket in body     :", foundTixInBody)
 	fmt.Println("found no_ticket in title :", foundNoTixInTitle)
 	fmt.Println("found no_ticket in body  :", foundNoTixInBody)
+	endGroup()
 
 	if ghCtx.EventName != "pull_request" {
 		fmt.Println("success, event is not a pull request")
