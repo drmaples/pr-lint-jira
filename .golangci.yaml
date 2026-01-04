@@ -1,0 +1,181 @@
+# https://golangci-lint.run/usage/configuration/
+version: "2"
+run:
+  go: "1.25"
+  issues-exit-code: 1
+  tests: true
+  allow-parallel-runners: true
+linters:
+  enable:
+    - bodyclose
+    - contextcheck
+    - copyloopvar
+    - depguard
+    - errname
+    - gocritic
+    - gosec
+    - importas
+    - misspell
+    - nakedret
+    - nilnesserr
+    - nolintlint
+    - nonamedreturns
+    - predeclared
+    - reassign
+    - revive
+    - rowserrcheck
+    - sloglint
+    - sqlclosecheck
+    - staticcheck
+    - tagliatelle
+    - testifylint
+    - unconvert
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+  settings:
+    copyloopvar:
+      check-alias: true
+    depguard:
+      rules:
+        main:
+          list-mode: lax # allow unless explicitly denied
+          deny:
+            - pkg: errors
+              desc: use github.com/pkg/errors since it provides stack traces
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - evalOrder
+        - httpNoBody
+        - hugeParam
+        - paramTypeCombine
+        - rangeValCopy
+        - unnecessaryBlock
+        - unnamedResult
+        - whyNoLint
+      settings:
+        ifElseChain:
+          minThreshold: 4
+        nestingReduce:
+          bodyWidth: 8
+    misspell:
+      locale: US
+      ignore-rules:
+        - cancelled
+        - labelled
+        - marshalled
+        - marshalling
+    nolintlint:
+      allow-no-explanation:
+        - sloglint
+    revive:
+      severity: warning
+      rules:
+        - name: bare-return
+          severity: error
+        - name: blank-imports
+          severity: error
+        - name: dot-imports
+          severity: error
+        - name: duplicated-imports
+          severity: error
+        - name: error-naming
+          severity: error
+        - name: error-strings
+          severity: error
+        - name: if-return
+          severity: error
+        - name: import-shadowing
+          severity: error
+        - name: increment-decrement
+          severity: error
+        - name: indent-error-flow
+          severity: error
+        - name: time-equal
+          severity: error
+        - name: unexported-naming
+          severity: error
+        - name: unnecessary-stmt
+          severity: error
+        - name: unreachable-code
+          severity: error
+        - name: unused-parameter
+          severity: error
+        - name: var-declaration
+          severity: error
+        - name: var-naming
+          arguments:
+            - []
+            - []
+            - - skipPackageNameChecks=true: null
+          severity: error
+    sloglint:
+      no-mixed-args: true
+      kv-only: false
+      attr-only: true
+      no-global: ""
+      context: scope # FIXME: a good one to wire up at some point
+      static-msg: true
+      no-raw-keys: false
+      key-naming-case: snake
+      args-on-sep-lines: false
+    staticcheck:
+      checks:
+        - all
+    tagliatelle:
+      case:
+        rules:
+          json: snake
+        use-field-name: true
+    testifylint:
+      enable-all: true
+      disable:
+        - suite-dont-use-pkg
+    unused:
+      field-writes-are-uses: false
+      post-statements-are-reads: true
+      # exported-is-used: false  # this one panics if enabled
+      exported-fields-are-used: false
+      # parameters-are-used: false  # do not enable this one, revive handles it
+      local-variables-are-used: false
+      generated-is-used: false
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 10
+  max-same-issues: 10
+  fix: false
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+      rewrite-rules:
+        - pattern: interface{}
+          replacement: any
+    gofumpt:
+      module-path: github.com/drmaples/pr-lint-jira
+      extra-rules: true
+    goimports:
+      local-prefixes:
+        - github.com/drmaples/pr-lint-jira
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

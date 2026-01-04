@@ -1,34 +1,89 @@
-name: 'build-test'
-on: # rebuild any PRs and main branch changes
+name: ci
+
+on:
   pull_request:
-  push:
-    branches:
-      - main
-      - 'releases/*'
+    types: ["opened", "edited", "synchronize"]
 
 jobs:
   # gatekeeper job to know when CI is done. used by "Require status checks to pass before merging" setting
   ci_done:
     runs-on: ubuntu-latest
     needs:
-      - build
-      - test
+      - lint_go
+      - deps
+      - test_integration
+      - build_containers
+      - test_install
     steps:
       - run: echo "all done"
 
-  build: # make sure build/ci work properly
+  lint_go:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v3
-      - run: mise run all
+      - uses: actions/setup-go@v6
+        with:
+          go-version: 1.25.5
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.7.2 # keep in sync with mise.toml
+          args: -v
 
-  test: # make sure the action works on a clean machine without building
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: 1.25.5
+      - run: go mod tidy && go mod vendor && go mod verify
+      - run: git status --porcelain
+      - run: exit $(git status --porcelain | wc -l)
+
+  test_integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: 1.25.5
+      - name: run tests
+        run: |
+          go clean -testcache
+          go test ./...
+        env:
+          ENVIRONMENT: test
+
+  build_containers:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          SHORT_SHA=${GITHUB_SHA::7}
+          DATE=$(date +%Y%m%d)
+          TAG="${DATE}_${SHORT_SHA}"
+          echo "DOCKER_TAG=$TAG" >> $GITHUB_ENV
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:${{ github.head_ref }}
+
+  test_install: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./
-        env:
-          IS_CI: 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

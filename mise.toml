@@ -1,40 +1,16 @@
 [tools]
-node = "24.11.1"
-pnpm = "10.27.0"
+go = "1.25.5"
+golangci-lint = "2.7.2"
 
 
 [tasks.build]
-description = "compile typescript"
-run = """
-  pnpm install
-  pnpm exec tsc
-  """
-
-[tasks.format]
-description = "format code"
-run = "pnpm exec prettier --write **/*.ts"
+description = "build docker container"
+run = "docker build . --file Dockerfile --tag github.com/drmaples/pr-lint-jira"
 
 [tasks.lint]
 description = "lint code"
-run = "pnpm exec eslint src/**/*.ts"
-
-[tasks.package]
-description = "package into dist"
-run = """
-  rm -f ./dist/*
-  pnpm exec ncc build lib/main.js --source-map
-  """
+run = "golangci-lint run -v ./..."
 
 [tasks.test]
 description = "run tests"
-run = "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 pnpm exec jest"
-
-[tasks.all]
-description = "run everything"
-run = [
-  { task = "build" },
-  { task = "format" },
-  { task = "lint" },
-  { task = "test" },
-  { task = "package" },
-]
+run = "go test ./..."

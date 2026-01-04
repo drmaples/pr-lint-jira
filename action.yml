@@ -1,28 +1,32 @@
-name: 'drmaples/pr-lint-jira'
-description: 'Lint PR to ensure a ticket is found in both the title and the body'
+name: "drmaples/pr-lint-jira"
+description: "Lint PR to ensure a ticket is found in both the title and the body"
 
 inputs:
   token:
-    description: 'GitHub authentication token'
+    description: gitHub authentication token used to make a PR comment if make_pr_comment is enabled
     required: true
   make_pr_comment:
-    description: if enabled, create a PR comment on missing ticket
+    description: "if enabled, create a PR comment on missing ticket. requires `issues: write` and `pull-requests: write` permissions if true"
     required: false
-    default: 'false'
+    default: "false"
   title_regex:
-    description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see src/main.ts for default value
+    description: regex that matches ticket in PR title. defaults to ticket in square brackets anywhere in the title. see source code for default value
     required: false
   body_regex:
-    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body. see src/main.ts for default value
+    description: regex that matches ticket in PR body. defaults to ticket in square brackets being anywhere in PR body. see source code for default value
     required: false
   no_ticket:
-    description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see src/main.ts for default value
+    description: your PR has no associated ticket. use this string in both the PR title and body to pass linting. see source code for default value
     required: false
+  log_level:
+    description: info | debug
+    required: false
+    default: info
 
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: "docker"
+  image: docker://ghcr.io/drmaples/pr-lint-jira:main
 
 branding:
-  icon: 'git-pull-request'
-  color: 'blue'
+  icon: "git-pull-request"
+  color: "blue"

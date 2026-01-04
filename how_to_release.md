@@ -7,3 +7,4 @@ how to release:
    git tag -f v1
    git push origin v1 --force
    ```
+1. make sure runs.image in `action.yml` points to right image tag
