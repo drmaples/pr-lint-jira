@@ -69,7 +69,7 @@ jobs:
           SHORT_SHA=${GITHUB_SHA::7}
           DOCKER_TAG="${SHA_DATE}_${SHORT_SHA}"
           echo "DOCKER_TAG: $DOCKER_TAG"
-          echo "DOCKER_TAG=$SHA_VERSION" >> $GITHUB_ENV
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -83,7 +83,9 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
             ghcr.io/${{ github.repository }}:${{ github.head_ref }}
 
-  test_install: # make sure the action works on a clean machine without building
+  # make sure the action works on a clean machine without building
+  # not a great test, just tests image that is setup in runs.image in action.yml
+  test_install:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
