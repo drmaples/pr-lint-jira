@@ -25,7 +25,7 @@ inputs:
 
 runs:
   using: "docker"
-  image: docker://ghcr.io/drmaples/pr-lint-jira:main
+  image: docker://ghcr.io/drmaples/pr-lint-jira:2026_01_04_5c021bf
 
 branding:
   icon: "git-pull-request"
